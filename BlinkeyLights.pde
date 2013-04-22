@@ -5,18 +5,17 @@ class BlinkeyLights {
   BlinkeyLights( int radius_, int strips_, int lights_per_strip_) {
     blinkeyLights = new ArrayList<BlinkeyLight>();
 
-    radius_ = radius_ * 10;
+    radius_ = radius_ * 20;
 
     for (int light = lights_per_strip_ -1; light > 0; light--) {
       for (int strip = 0; strip < strips_; strip++) {  
 
-
-        float inclination = HALF_PI + (HALF_PI)*((float)light/lights_per_strip_);
         float azimuth     = (2*PI)*((float)strip/strips_);
+        float radius = radius_ * ((float)light/lights_per_strip_);
 
-        float x = radius_ * cos(azimuth) * sin(inclination);
-        float z = radius_ * sin(azimuth) * sin(inclination);
-        float y = radius_ *                cos(inclination);
+        float x = radius/20 + radius * cos(azimuth);
+        float y = radius/20 + radius * sin(azimuth);
+        float z = 0;
 
         blinkeyLights.add(new BlinkeyLight(x, y, z));
       }
@@ -34,6 +33,10 @@ class BlinkeyLights {
   }
 
   void draw() {
+    stroke(255, 100, 100, 50);
+    strokeWeight(1);
+    noFill();
+
     for (int i = 0; i < blinkeyLights.size(); i++) { 
       (blinkeyLights.get(i)).draw();
     }

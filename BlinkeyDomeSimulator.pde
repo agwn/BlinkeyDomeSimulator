@@ -7,9 +7,9 @@ import hypermedia.net.*;
 
 import java.util.concurrent.*;
 
-int DOME_RADIUS = 8;
-int strips = 40;               // Number of strips around the circumference of the sphere
-int lights_per_strip = 32*5;    // Number of lights along the strip
+int DOME_RADIUS = 4;
+int strips = 32;               // Number of strips around the circumference of the sphere
+int lights_per_strip = 80;    // Number of lights along the strip
 int packet_length = strips*lights_per_strip*3 + 1;
 
 Boolean demoMode = true;
@@ -32,8 +32,11 @@ PImage groundTexture;
 
 void setup() {
   size(1024/2, 850/2, OPENGL);
-  colorMode(RGB,255);
-  frameRate(60);
+  //size(800, 600, OPENGL);
+  //size(1680, 1000, OPENGL);
+  colorMode(RGB, 1);
+  //colorMode(RGB, 255);
+  frameRate(20);
 
   // Turn on vsync to prevent tearing
   PGraphicsOpenGL pgl = (PGraphicsOpenGL) g; //processing graphics object
@@ -41,8 +44,7 @@ void setup() {
   gl.setSwapInterval(0); //set vertical sync on
   pgl.endGL(); //end opengl
 
-  //size(1680, 1000, OPENGL);
-  pCamera = new PeasyCam(this, 0, -50, 0, 100);
+  pCamera = new PeasyCam(this, 0, 0, 0, 150);
   pCamera.setMinimumDistance(.2);
   pCamera.setMaximumDistance(150*10);
   pCamera.setSuppressRollRotationMode();
@@ -56,10 +58,10 @@ void setup() {
   udp.listen( true );
 
   font = loadFont("Serif-24.vlw"); 
-  hud = new Hud();
+  hud = new Hud(10,height-lights_per_strip-10,strips,lights_per_strip);
   dome = new Dome(DOME_RADIUS);
   blinkeyLights = new BlinkeyLights(DOME_RADIUS, strips, lights_per_strip);
-  imageHud = new ImageHud(20, height-160-20, strips, lights_per_strip);
+  imageHud = new ImageHud(20, height-lights_per_strip-20, strips, lights_per_strip);
 
   groundTexture = loadImage("Lost Lake.jpg");
 
@@ -78,7 +80,7 @@ int convertByte(byte b) {
     maxConvertedByte = c;
     println("Max Converted Byte is now " + c);
   }  
-  
+
   return c;
 }
 
@@ -88,7 +90,7 @@ void receive(byte[] data, String ip, int port) {
     println("Started receiving data from " + ip + ". Demo mode disabled.");
     demoMode = false;
   }
-  
+
   if (data[0] == 2) {
     // We got a new mode, so copy it out
     String modeName = new String(data);
@@ -114,24 +116,24 @@ void receive(byte[] data, String ip, int port) {
   color[] newImage = new color[strips*lights_per_strip];
 
   for (int i=0; i< strips*lights_per_strip; i++) {
-      // Processing doesn't like it when you call the color function while in an event
-      // go figure
-      newImage[i] = (int)(0xff<<24 | convertByte(data[i*3 + 1])<<16) |
-            (convertByte(data[i*3 + 2])<<8) |
-            (convertByte(data[i*3 + 3]));
+    // Processing doesn't like it when you call the color function while in an event
+    // go figure
+    newImage[i] = (int)(0xff<<24 | convertByte(data[i*3 + 1])<<16) |
+      (convertByte(data[i*3 + 2])<<8) |
+      (convertByte(data[i*3 + 3]));
   }
   try { 
     newImageQueue.put(newImage);
   } 
   catch( InterruptedException e ) {
     println("Interrupted Exception caught");
-  }  
+  }
 }
 
 void drawGround() {
   stroke(92, 51);
   fill(92, 51);
-  
+
   int tilefactor = 10;
   float bound = DOME_RADIUS*10*4;
 
@@ -139,17 +141,17 @@ void drawGround() {
     for (int y = 0; y < tilefactor; y++) {
       pushMatrix();
       translate(0, 0.5, 0);
-      
+
       translate(bound/tilefactor*x-bound/2, 0, bound/tilefactor*y-bound/2);
-      
+
       beginShape();
       texture(groundTexture);
-      textureMode(NORMALIZED);
-      
-      vertex(0,                .5, 0,                0, 0);
-      vertex(bound/tilefactor, .5, 0,                1, 0);
+      textureMode(NORMAL);
+
+      vertex(0, .5, 0, 0, 0);
+      vertex(bound/tilefactor, .5, 0, 1, 0);
       vertex(bound/tilefactor, .5, bound/tilefactor, 1, 1);
-      vertex(0,                .5, bound/tilefactor, 0, 1);
+      vertex(0, .5, bound/tilefactor, 0, 1);
       endShape();
       popMatrix();
     }
@@ -170,16 +172,16 @@ void draw() {
   background(0);
   lights();
 
-  drawGround();
+  //drawGround();
 
-  dome.draw();
+  //dome.draw();
   blinkeyLights.draw();
 
   hud.draw();
   imageHud.draw();
 
   drawFPS();
-  
+
   if (newImageQueue.size() > 0) {
     color[] newImage = (color[])newImageQueue.remove();
     blinkeyLights.update(newImage);

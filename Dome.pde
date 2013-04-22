@@ -5,18 +5,18 @@ import processing.opengl.*;
 class Dome {
   float rho;
   float factor;
-  
+
   Dome(float radius_) {
-    
+
     rho = radius_*10;
     factor = TWO_PI / 20.0;
   }
-  
+
   void draw() {
-    stroke(255,100,100,50);
+    stroke(255, 100, 100, 50);
     strokeWeight(1);
     noFill();//fill(200,50,50,0);
-  
+
     for (float phi = 0.0; phi < HALF_PI; phi += factor) {
       beginShape(QUAD_STRIP);
       for (float theta = 0.0; theta < TWO_PI + factor; theta += factor) {
@@ -35,6 +35,5 @@ class Dome {
       endShape(CLOSE);
     }
   }
-  
 }
 
