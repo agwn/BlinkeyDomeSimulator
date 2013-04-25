@@ -7,16 +7,20 @@ class DemoTransmitter extends Thread {
 
     color[] imageData = new color[image_size];
 
-    for (int i = 0; i < imageData.length; i++) {
-      if (animationStep == i%16) {
-        imageData[i] = color(0, 128, 255);
-      }
-      else {
-        imageData[i] = color(0, 0, 0);
+    for (int strip = 0; strip < strips; strip++) {
+      for (int light =0; light < lights_per_strip; light++) {
+        int loc = lights_per_strip*strip+light;
+
+        if (animationStep == light%60) {
+          imageData[loc] = color(255, 0, 0);
+        }
+        else {
+          imageData[loc] = color(0, 0, 0);
+        }
       }
     }
 
-    animationStep = (animationStep + 1)%16;
+    animationStep = (animationStep + 1)%60;
 
     return imageData;
   }

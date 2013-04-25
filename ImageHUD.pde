@@ -11,8 +11,13 @@ class ImageHud {
 
   void update(color[] imageData) {
     img.loadPixels();
-    for (int i = 0; i < blinkeyLights.size(); i++) {
-      img.pixels[i] = imageData[i];
+    for (int strip = 0; strip < strips; strip++) {
+      for (int light = 0; light < lights_per_strip; light++) {
+        int loc = strip*lights_per_strip+light;
+        //println("l: "+light+" s: "+strip+" c: "+hex(imageData[loc]));
+
+        img.pixels[loc] = imageData[loc];
+      }
     }
     img.updatePixels();
   }

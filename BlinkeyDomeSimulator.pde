@@ -7,9 +7,9 @@ import hypermedia.net.*;
 
 import java.util.concurrent.*;
 
-int DOME_RADIUS = 4;
+int DOME_RADIUS =4;
+int lights_per_strip = 60;    // Number of lights along the strip
 int strips = 32;               // Number of strips around the circumference of the sphere
-int lights_per_strip = 80;    // Number of lights along the strip
 int packet_length = strips*lights_per_strip*3 + 1;
 
 Boolean demoMode = true;
@@ -31,8 +31,8 @@ PFont font;
 PImage groundTexture;
 
 void setup() {
-  size(1024/2, 850/2, OPENGL);
-  //size(800, 600, OPENGL);
+  //size(1024/2, 850/2, OPENGL);
+  size(800, 600, OPENGL);
   //size(1680, 1000, OPENGL);
   colorMode(RGB, 1);
   //colorMode(RGB, 255);
@@ -58,12 +58,10 @@ void setup() {
   udp.listen( true );
 
   font = loadFont("Serif-24.vlw"); 
-  hud = new Hud(10,height-lights_per_strip-10,strips,lights_per_strip);
+  hud = new Hud(10, height-strips-10, lights_per_strip, strips);
   dome = new Dome(DOME_RADIUS);
   blinkeyLights = new BlinkeyLights(DOME_RADIUS, strips, lights_per_strip);
-  imageHud = new ImageHud(20, height-lights_per_strip-20, strips, lights_per_strip);
-
-  groundTexture = loadImage("Lost Lake.jpg");
+  imageHud = new ImageHud(20, height-strips-20, lights_per_strip, strips);
 
   demoTransmitter = new DemoTransmitter();
   demoTransmitter.start();
@@ -115,12 +113,22 @@ void receive(byte[] data, String ip, int port) {
 
   color[] newImage = new color[strips*lights_per_strip];
 
-  for (int i=0; i< strips*lights_per_strip; i++) {
-    // Processing doesn't like it when you call the color function while in an event
-    // go figure
-    newImage[i] = (int)(0xff<<24 | convertByte(data[i*3 + 1])<<16) |
-      (convertByte(data[i*3 + 2])<<8) |
-      (convertByte(data[i*3 + 3]));
+//  for (int i=0; i< strips*lights_per_strip; i++) {
+//    // Processing doesn't like it when you call the color function while in an event
+//    // go figure
+//    newImage[i] = (int)(0xff<<24 | convertByte(data[i*3 + 1])<<16) |
+//      (convertByte(data[i*3 + 2])<<8) |
+//      (convertByte(data[i*3 + 3]));
+//  }
+  for (int strip=0; strip<strips; strip++) {
+    for (int light=0; light<lights_per_strip; light++) {
+      int loc = (strip*lights_per_strip+light);
+      // Processing doesn't like it when you call the color function while in an event
+      // go figure
+      newImage[loc] = (int)(0xff<<24 | convertByte(data[loc*3 + 1])<<16) |
+        (convertByte(data[loc*3 + 2])<<8) |
+        (convertByte(data[loc*3 + 3]));
+    }
   }
   try { 
     newImageQueue.put(newImage);
