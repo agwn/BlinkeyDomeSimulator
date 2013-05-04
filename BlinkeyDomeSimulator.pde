@@ -2,7 +2,7 @@ import peasy.org.apache.commons.math.*;
 import peasy.*;
 import peasy.org.apache.commons.math.geometry.*;
 import processing.opengl.*;
-import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import hypermedia.net.*;
 
 import java.util.concurrent.*;
@@ -31,18 +31,18 @@ PFont font;
 PImage groundTexture;
 
 void setup() {
-  //size(1024/2, 850/2, OPENGL);
-  size(800, 600, OPENGL);
-  //size(1680, 1000, OPENGL);
+  //size(1024/2, 850/2, P3D);
+  size(900, 700, P3D);
+  //size(1680, 1000, P3D);
   colorMode(RGB, 1);
   //colorMode(RGB, 255);
   frameRate(20);
 
   // Turn on vsync to prevent tearing
   PGraphicsOpenGL pgl = (PGraphicsOpenGL) g; //processing graphics object
-  GL gl = pgl.beginGL(); //begin opengl
+  GL2 gl = pgl.beginPGL().gl.getGL2(); //begin opengl
   gl.setSwapInterval(0); //set vertical sync on
-  pgl.endGL(); //end opengl
+  pgl.endPGL(); //end opengl
 
   pCamera = new PeasyCam(this, 0, 0, 0, 150);
   pCamera.setMinimumDistance(.2);
