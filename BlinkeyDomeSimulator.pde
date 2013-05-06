@@ -31,8 +31,7 @@ PFont font;
 PImage groundTexture;
 
 void setup() {
-  //size(1024/2, 850/2, P3D);
-  size(450, 350, P3D);
+  size(700, 700, P3D);
   //size(1680, 1000, P3D);
   colorMode(RGB, 1);
   //colorMode(RGB, 255);
