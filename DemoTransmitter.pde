@@ -11,8 +11,8 @@ class DemoTransmitter extends Thread {
       for (int light =0; light < lights_per_strip; light++) {
         int loc = lights_per_strip*strip+light;
 
-        if (animationStep == light%10) {
-          imageData[loc] = color(0, 0, 255);
+        if (animationStep == strip%4) {
+          imageData[loc] = color(0,0,255);
         }
         else {
           imageData[loc] = color(0, 0, 0);
@@ -20,7 +20,7 @@ class DemoTransmitter extends Thread {
       }
     }
 
-    animationStep = (animationStep + 1)%10;
+    animationStep = (animationStep + 1)%4;
 
     return imageData;
   }

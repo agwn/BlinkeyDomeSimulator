@@ -29,11 +29,11 @@ class ImageHud {
 
     //    pushMatrix();
     //    translate(0, 0.5, 0);
-    //  
+    //
     //    beginShape();
     //    texture(groundTexture);
     //    textureMode(NORMALIZED);
-    //  
+    //
     //    vertex(w_, h_, 0, 0, 0);
     //    vertex(bound, .5, -bound, 1, 0);
     //    vertex(bound, .5, bound, 1, 1);

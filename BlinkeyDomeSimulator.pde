@@ -7,7 +7,7 @@ import hypermedia.net.*;
 
 import java.util.concurrent.*;
 
-int DOME_RADIUS =4;
+int DOME_RADIUS = 4;
 int lights_per_strip = 60;    // Number of lights along the strip
 int strips = 32;               // Number of strips around the circumference of the sphere
 int packet_length = strips*lights_per_strip*3 + 1;
@@ -23,7 +23,7 @@ UDP udp;
 
 PeasyCam pCamera;
 BlinkeyLights blinkeyLights;
-Dome dome;
+//Dome dome;
 Hud hud;
 ImageHud imageHud;
 
@@ -32,11 +32,11 @@ PImage groundTexture;
 
 void setup() {
   //size(1024/2, 850/2, P3D);
-  size(900, 700, P3D);
+  size(450, 350, P3D);
   //size(1680, 1000, P3D);
   colorMode(RGB, 1);
   //colorMode(RGB, 255);
-  frameRate(20);
+  frameRate(15);
 
   // Turn on vsync to prevent tearing
   PGraphicsOpenGL pgl = (PGraphicsOpenGL) g; //processing graphics object
@@ -59,7 +59,7 @@ void setup() {
 
   font = loadFont("Serif-24.vlw"); 
   hud = new Hud(10, height-strips-10, lights_per_strip, strips);
-  dome = new Dome(DOME_RADIUS);
+  //dome = new Dome(DOME_RADIUS);
   blinkeyLights = new BlinkeyLights(DOME_RADIUS, strips, lights_per_strip);
   imageHud = new ImageHud(20, height-strips-20, lights_per_strip, strips);
 
@@ -113,13 +113,13 @@ void receive(byte[] data, String ip, int port) {
 
   color[] newImage = new color[strips*lights_per_strip];
 
-//  for (int i=0; i< strips*lights_per_strip; i++) {
-//    // Processing doesn't like it when you call the color function while in an event
-//    // go figure
-//    newImage[i] = (int)(0xff<<24 | convertByte(data[i*3 + 1])<<16) |
-//      (convertByte(data[i*3 + 2])<<8) |
-//      (convertByte(data[i*3 + 3]));
-//  }
+  //  for (int i=0; i< strips*lights_per_strip; i++) {
+  //    // Processing doesn't like it when you call the color function while in an event
+  //    // go figure
+  //    newImage[i] = (int)(0xff<<24 | convertByte(data[i*3 + 1])<<16) |
+  //      (convertByte(data[i*3 + 2])<<8) |
+  //      (convertByte(data[i*3 + 3]));
+  //  }
   for (int strip=0; strip<strips; strip++) {
     for (int light=0; light<lights_per_strip; light++) {
       int loc = (strip*lights_per_strip+light);
@@ -128,6 +128,9 @@ void receive(byte[] data, String ip, int port) {
       newImage[loc] = (int)(0xff<<24 | convertByte(data[loc*3 + 1])<<16) |
         (convertByte(data[loc*3 + 2])<<8) |
         (convertByte(data[loc*3 + 3]));
+      //newImage[loc] = color(data[loc*3 + 1], data[loc*3 + 2], data[loc*3 + 3], 0xff);
+
+      //println("s: "+strip+" l: "+light+" loc: "+loc+" c: "+hex(newImage[loc]));
     }
   }
   try { 
@@ -178,7 +181,7 @@ void drawFPS() {
 
 void draw() {
   background(0);
-  lights();
+  //lights();
 
   //drawGround();
 
